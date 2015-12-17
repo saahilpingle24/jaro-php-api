@@ -1,5 +1,5 @@
 <?php
- 
+ session_start();
 require_once __DIR__ . '/vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Kms\KmsClient;
@@ -37,9 +37,8 @@ $endpoint = $s3_client->getObject(array(
 'Key'    => 'db_endpoint.txt',
 ));
 
-$dec_username = $kms_client->decrypt(array('CiphertextBlob' => $username['Body']))["Plaintext"];
-$dec_password = $kms_client->decrypt(array('CiphertextBlob' => $password['Body']))["Plaintext"];
-$dec_endpoint = $kms_client->decrypt(array('CiphertextBlob' => $endpoint['Body']))["Plaintext"];
-
+$_SESSION['username'] = $kms_client->decrypt(array('CiphertextBlob' => $username['Body']))["Plaintext"];
+$_SESSION['password'] = $kms_client->decrypt(array('CiphertextBlob' => $password['Body']))["Plaintext"];
+$_SESSION['endpoint'] = $kms_client->decrypt(array('CiphertextBlob' => $endpoint['Body']))["Plaintext"];	
 
 ?>
