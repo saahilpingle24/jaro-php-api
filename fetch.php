@@ -40,9 +40,6 @@ $endpoint = $s3_client->getObject(array(
 $dec_username = $kms_client->decrypt(array('CiphertextBlob' => $username['Body']))["Plaintext"];
 $dec_password = $kms_client->decrypt(array('CiphertextBlob' => $password['Body']))["Plaintext"];
 $dec_endpoint = $kms_client->decrypt(array('CiphertextBlob' => $endpoint['Body']))["Plaintext"];
-putenv('dbusername=$dec_username');
-putenv('dbpassword=$dec_password');
-putenv('dbendpoint=$dec_endpoint');
 
 
 ?>
