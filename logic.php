@@ -20,8 +20,11 @@ function function_get_db() {
  */
 function function_get($request_endpoint) {
 	try {		
-		$exploded = explode('/', $request_endpoint);		
-		if ($exploded[1] == 'v1') {
+		$exploded = explode('/', $request_endpoint);
+		if ($exploded[1] == 'test') {
+			$response['response'] = "working";
+			echo json_encode($response);
+		} else if ($exploded[1] == 'v1') {
 			if ($exploded[2] == 'register' & !isset($exploded[3])) {
 				function_generate_api_key();
 				return;
