@@ -2,34 +2,17 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'jaro.php';
-require_once 'db.php';
-
+include 'fetch.php';
 use Aws\Sqs\SqsClient;
 
-/**
- * Define AWS account credentials in this function 
- */
-function aws_credentials() {
-	$aws_credentials = array(
-	    'region' => 'us-west-2',
-	    'version' => 'latest',
-	    'credentials' => array(
-	        'key'    => '',
-	        'secret' => '',
-	    )
-	);
-	return $aws_credentials;		
-}
-
-/**
- * Initiate connection with the DB
- * If already existing, return it; else make a function call to create new connection
- */
 function function_get_db() {
-	if (!isset($conn)) {
-		$conn = function_db_connect();
+	if(!isset($conn)) {
+		$conn = new PDO('mysql:host='.$_SESSION['endpoint'].';dbname=p2schema', $_SESSION['username'], $_SESSION['password']);
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+		return $conn;		
+	} else {
+		return $conn;	
 	}
-	return $conn;
 }
 
 /**
@@ -113,17 +96,8 @@ function function_get($request_endpoint) {
  * Function for generating API key
  */
 function function_generate_api_key() {
-	$aws_credentials = aws_credentials();	
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-	    $ip_address = $_SERVER['HTTP_CLIENT_IP'];
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-	    $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	} else {
-	    $ip_address = $_SERVER['REMOTE_ADDR'];
-	}	
-
+	$ip_address = "0.0.0.0";
 	$token = bin2hex(openssl_random_pseudo_bytes(16));
-
 	$response = [];
 	$status = true;
 	
