@@ -1,6 +1,5 @@
 <?php
-function jaro( $string1, $string2)
-{
+function jaro( $string1, $string2) {
 	$string1_len = strlen($string1);
 	$string2_len = strlen($string2);
 	
@@ -27,8 +26,7 @@ function jaro( $string1, $string2)
 	return (($upperBound/($string1_len) + $upperBound/($string2_len) + ($upperBound - $transpositions)/($commons1_len)) / 3.0);
 }
 
-function commonCharacters( $string1, $string2, $distance )
-{
+function commonCharacters( $string1, $string2, $distance ) {
 	$string1_len = strlen($string1);
 	$string2_len = strlen($string2);
 	$commonCharacters='';
@@ -50,8 +48,7 @@ function commonCharacters( $string1, $string2, $distance )
 	return $commonCharacters;
 }
 
-function prefixLength( $string1, $string2, $MINPREFIXLENGTH = 4 )
-{
+function prefixLength( $string1, $string2, $MINPREFIXLENGTH = 4 ) {
 	$n = min( array( $MINPREFIXLENGTH, strlen($string1), strlen($string2) ) );
     for($i = 0; $i < $n; $i++)
 	{
@@ -63,8 +60,7 @@ function prefixLength( $string1, $string2, $MINPREFIXLENGTH = 4 )
 	return $n;
 }
 
-function jaroWinkler($string1, $string2, $threshold, $PREFIXSCALE = 0.1)
-{
+function jaroWinkler($string1, $string2, $threshold, $PREFIXSCALE = 0.1) {
 	$result_set = [];
 	$name = strtolower($string1);
 	$aliases = $string2;	

@@ -1,19 +1,6 @@
-{
-    "name" : "saahil/sqs",
-    "version" : "0.1.0",
-    "description" : "cloud project 2",
-    "license" : "N/A",
-    "authors" : [
-        {
-            "name" : "Saahil Pingle",
-            "email" : "pingle.saahil@gmail.com",
-            "homepage" : "http://www.nowebsite.com",
-            "role" : "Developer"
-        }
-    ],
+{    
     "require" : {
-        "php" : ">=5.3.0",
-        "aws/aws-sdk-php" : "3.*",
-        "robmorgan/phinx": "^0.5.0"
+        "php" : ">=5.3.0",        
+        "vlucas/phpdotenv": "^2.2"        
     }
 }

@@ -2,33 +2,26 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'jaro.php';
-include 'fetch.php';
-use Aws\Sqs\SqsClient;
+require_once 'database.php';
 
-function function_get_db() {
-	if(!isset($conn)) {
-		$conn = new PDO('mysql:host='.$_SESSION['endpoint'].';dbname=p2schema', $_SESSION['username'], $_SESSION['password']);
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
-		return $conn;		
-	} else {
-		return $conn;	
-	}
+function function_get_db() {	
+	$db = Database::getInstance();
+    $conn = $db->getConnection(); 
+    return $conn;	
 }
 
-/**
- * Handling GET requests made to the API 
- */
 function function_get($request_endpoint) {
 	try {		
 		$exploded = explode('/', $request_endpoint);
 		if ($exploded[1] == 'test') {
-			$response['response'] = "working";
+			$response['error']  ='false';
+			$response['response'] = 'test API endpoint working';
 			echo json_encode($response);
 		} else if ($exploded[1] == 'v1') {
 			if ($exploded[2] == 'register' & !isset($exploded[3])) {
 				function_generate_api_key();
 				return;
-			} 
+			}
 			if (explode('?',$exploded[2])[0] == 'alias') {
 				$error = 'input_error';				
 				if (isset($_GET['key'])) $access_key = $_GET['key'];	
@@ -43,7 +36,7 @@ function function_get($request_endpoint) {
 				if (isset($_GET['threshold'])) $threshold = $_GET['threshold'];
 				else $threshold = 0.0;
 
-				$x = function_validate_api_key($access_key);				
+				$x = function_validate_api_key($access_key);	
 				if (!$x[0]) {
 				 	throw new Exception('api_key_error');				 	
 				} else {
@@ -94,17 +87,13 @@ function function_get($request_endpoint) {
 	return;
 }
 
-
-/**
- * Function for generating API key
- */
-function function_generate_api_key() {
-	$ip_address = "0.0.0.0";
+function function_generate_api_key() {	
 	$token = bin2hex(openssl_random_pseudo_bytes(16));
 	$response = [];
 	$status = true;
 	
-	$conn = function_get_db();
+	$conn = function_get_db();		
+	
 	while ($status) {
 		$stmt = $conn->prepare('SELECT * FROM access_key WHERE access_key = :access_key');
 		$stmt->execute(array('access_key' => $token));
@@ -116,28 +105,23 @@ function function_generate_api_key() {
 		}
 	}
 
-	$stmt = $conn->prepare("INSERT INTO access_key (access_key,ip_address, created) VALUES (:access_key,:ip_address,:created)");
-  	$stmt->bindParam(':access_key', $token);
-  	$stmt->bindParam(':ip_address', $ip_address);
-  	$stmt->bindParam(':created', date("Y-m-d H:i:s") );  	  	
+	$stmt = $conn->prepare("INSERT INTO access_key (access_key, created) VALUES (:access_key,:created)");
+  	$stmt->bindParam(':access_key', $token);  
+  	$date = date("Y-m-d H:i:s");	
+  	$stmt->bindParam(':created', $date);  	  	
   	try {
   		$stmt->execute();	
   	}
   	catch (PDOException $e) {
   		echo $e->getMessage();
-  	}
-  	$conn = null;
+  	}  	
  	$response['error'] = 'false';
  	$response['access_key'] = $token;
  	echo json_encode($response);
 }
 
-
-/**
- * Function for validating the API access key
- */
 function function_validate_api_key($access_key) {
-	$conn = function_get_db();	
+	$conn = function_get_db();
 	$stmt = $conn->prepare("SELECT access_key FROM access_key WHERE access_key = :access_key");
 	$stmt->bindParam(':access_key',$access_key); 
   	try {
@@ -148,17 +132,13 @@ function function_validate_api_key($access_key) {
   			return array(true,'key_found');		
   		} else {
   			return array(false,'not_found_error');
-  		}
-  		$conn = null;
+  		}  		
   	}
   	catch (PDOException $e) {
   		echo $e->getMessage();
   	}  	
 }
 
-/**
- * Function for creating error messages
- */
 function function_error($reason) {
 	$error_message = [];
 	$error_message['error'] = 'true';

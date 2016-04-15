@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `p2schema` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `p2schema`;
+CREATE DATABASE  IF NOT EXISTS `schema` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `schema`;
 -- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
 --
 -- Host: 127.0.0.1    Database: p2schema
@@ -26,8 +26,7 @@ DROP TABLE IF EXISTS `access_key`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `access_key` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `access_key` varchar(32) NOT NULL,
-  `ip_address` varchar(15) NOT NULL,
+  `access_key` varchar(32) NOT NULL,  
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

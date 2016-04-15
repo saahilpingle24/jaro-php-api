@@ -10,10 +10,6 @@ switch($http_method) {
 		function_get($request_endpoint);
 		break;
 
-	case 'POST':
-		function_post($request_endpoint);
-		break;
-
 	default:
 		function_error('method_error');		
 		break;
